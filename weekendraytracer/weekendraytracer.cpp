@@ -17,6 +17,7 @@ int main()
 
 	fs << "P3\n" << nx << " " << ny << "\n255\n";
 
+	// Generate RGB values and write a line for each
 	for (int j = ny - 1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
 			vec3 col(float(i) / float(nx), float(j) / float(ny), 0.2);
