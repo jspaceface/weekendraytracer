@@ -3,7 +3,22 @@
 #include "ray.h"
 #include "simplepmm.h"
 
+
+bool hit_sphere(const vec3& center, double radius, const ray& ray) {
+	vec3 oc = ray.origin() - center;
+	double a = dot(ray.direction(), ray.direction());
+	double b = 2 * dot(ray.direction(), oc); 
+	double c = dot(oc, oc) - radius * radius;
+	double determinant = b*b - 4*a*c;
+	return determinant > 0;
+}
+
 vec3 color(const ray& r) {
+	// check if we hit a sphere at (0, 0, -1) w/ R = 0.5
+	if (hit_sphere(vec3(0,0,-1), 0.5, r)) {
+		return vec3(1, 0, 0);
+	}
+
 	// dir vector is now between -1 and 1
 	vec3 unit_direction = unit_vector(r.direction());
 	// shift y so that: 0.0 < t < 1.0
