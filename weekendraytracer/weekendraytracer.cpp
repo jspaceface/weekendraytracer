@@ -9,8 +9,8 @@
 // 	double a = dot(ray.direction(), ray.direction());
 // 	double b = 2 * dot(ray.direction(), oc); 
 // 	double c = dot(oc, oc) - radius * radius;
-// 	double determinant = b*b - 4*a*c;
-// 	return determinant > 0;
+// 	double discriminant = b*b - 4*a*c;
+// 	return discriminant > 0;
 // }
 
 double hit_sphere(const vec3& center, double radius, const ray& ray) {
@@ -18,14 +18,28 @@ double hit_sphere(const vec3& center, double radius, const ray& ray) {
 	double a = dot(ray.direction(), ray.direction());
 	double b = 2 * dot(ray.direction(), oc); 
 	double c = dot(oc, oc) - radius * radius;
-	double determinant = b*b - 4*a*c;
-	return determinant > 0;
+	double discriminant = b*b - 4*a*c;
+	if (discriminant < 0) {
+		return -1.0;
+	}
+	else {
+		return  (-b - sqrt(discriminant)) / (2*a);
+	}
 }
 
 vec3 color(const ray& r) {
 	// check if we hit a sphere at (0, 0, -1) w/ R = 0.5
 	if (hit_sphere(vec3(0,0,-1), 0.5, r)) {
 		return vec3(1, 0, 0);
+	}
+
+
+	double hit_result = hit_sphere(vec3(0,0,-1), 0.5, r);
+	if (hit_result < 0) {
+		// no hit
+	}
+	else {
+		
 	}
 
 	// dir vector is now between -1 and 1
