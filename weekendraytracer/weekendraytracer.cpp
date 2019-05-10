@@ -4,7 +4,16 @@
 #include "simplepmm.h"
 
 
-bool hit_sphere(const vec3& center, double radius, const ray& ray) {
+// bool hit_sphere(const vec3& center, double radius, const ray& ray) {
+// 	vec3 oc = ray.origin() - center;
+// 	double a = dot(ray.direction(), ray.direction());
+// 	double b = 2 * dot(ray.direction(), oc); 
+// 	double c = dot(oc, oc) - radius * radius;
+// 	double determinant = b*b - 4*a*c;
+// 	return determinant > 0;
+// }
+
+double hit_sphere(const vec3& center, double radius, const ray& ray) {
 	vec3 oc = ray.origin() - center;
 	double a = dot(ray.direction(), ray.direction());
 	double b = 2 * dot(ray.direction(), oc); 
