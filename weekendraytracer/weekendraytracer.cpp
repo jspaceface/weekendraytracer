@@ -4,20 +4,11 @@
 #include "simplepmm.h"
 
 
-// bool hit_sphere(const vec3& center, double radius, const ray& ray) {
-// 	vec3 oc = ray.origin() - center;
-// 	double a = dot(ray.direction(), ray.direction());
-// 	double b = 2 * dot(ray.direction(), oc); 
-// 	double c = dot(oc, oc) - radius * radius;
-// 	double discriminant = b*b - 4*a*c;
-// 	return discriminant > 0;
-// }
-
 double hit_sphere(const vec3& center, double radius, const ray& ray) {
 	vec3 oc = ray.origin() - center;
 	double a = dot(ray.direction(), ray.direction());
 	double b = 2 * dot(ray.direction(), oc); 
-	double c = dot(oc, oc) - radius * radius;
+	double c = dot(oc, oc) - radius*radius;
 	double discriminant = b*b - 4*a*c;
 	if (discriminant < 0) {
 		return -1.0;
@@ -46,11 +37,13 @@ vec3 color(const ray& r) {
 int main()
 {
 
+	std::cout << "Starting weekendraytracer.cpp..." << std::endl;
+
 	int nx = 200;
 	int ny = 100;
 
 	// open ppm file
-	std::ofstream fs("blended.ppm");
+	std::ofstream fs("sphere2.ppm");
 	if (!fs) { std::cerr << "Cannot open the output file." << std::endl; return 1;}
 	fs << "P3\n" << nx << " " << ny << "\n255\n";
 
@@ -63,6 +56,7 @@ int main()
 	vec3 vertical(0.0, 2.0, 0.0);
 	vec3 origin(0.0, 0.0, 0.0);
 
+	std::cout << "Beginning ray tracing..." << std::endl;
 	for (int j = ny-1; j >=0; j--) {
 		for (int i = 0; i < nx; i++) {
 
@@ -85,11 +79,12 @@ int main()
 		}
 	}
 
-
 	// close pmm file
 	fs.close();
 
+
 	// todo remove for release
+	std::cout << "Raytracing complete. Waiting for interrupt to close." << std::endl;
 	std::cin.get();
 	return 0;
 }
