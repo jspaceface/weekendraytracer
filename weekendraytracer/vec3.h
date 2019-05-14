@@ -45,6 +45,9 @@ public:
 	friend inline std::ostream& operator<<(std::ostream &os, const vec3 &t);
 	friend inline vec3 operator+(const vec3 &v1, const vec3 &v2);
 	friend inline vec3 operator-(const vec3 &v1, const vec3 &v2);
+	friend inline vec3 operator+(const vec3 &v, double t);
+	friend inline vec3 operator-(const vec3 &v, double t);
+	friend inline vec3 operator+(double t, const vec3 &v);
 	friend inline vec3 operator*(const vec3 &v1, const vec3 &v2);
 	friend inline vec3 operator/(const vec3 &v1, const vec3 &v2);
 	friend inline vec3 operator*(double t, const vec3 &v);
@@ -78,6 +81,18 @@ inline vec3 operator+(const vec3 &v1, const vec3 &v2) {
 
 inline vec3 operator-(const vec3 &v1, const vec3 &v2) {
 	return vec3(v1.e[0] - v2.e[0], v1.e[1] - v2.e[1], v1.e[2] - v2.e[2]);
+}
+
+inline vec3 operator+(const vec3 &v, double t) {
+	return vec3(v.e[0] + t, v.e[1] + t, v.e[2] + t);
+}
+
+inline vec3 operator-(const vec3 &v, double t) {
+	return vec3(v.e[0] - t, v.e[1] - t, v.e[2] - t);
+}
+
+inline vec3 operator+(double t, const vec3 &v) {
+	return vec3(v.e[0] + t, v.e[1] + t, v.e[2] + t);
 }
 
 inline vec3 operator*(const vec3 &v1, const vec3 &v2) {

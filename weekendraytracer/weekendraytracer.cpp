@@ -23,29 +23,22 @@ double hit_sphere(const vec3& center, double radius, const ray& ray) {
 		return -1.0;
 	}
 	else {
+		// smallest t = closest hit point (if there are two)
 		return  (-b - sqrt(discriminant)) / (2*a);
 	}
 }
 
 vec3 color(const ray& r) {
-	// check if we hit a sphere at (0, 0, -1) w/ R = 0.5
-	if (hit_sphere(vec3(0,0,-1), 0.5, r)) {
-		return vec3(1, 0, 0);
+	double t = hit_sphere(vec3(0,0,-1), 0.5, r);
+	if (t > 0.0) {
+		vec3 N = unit_vector(r.pt(t) - vec3(0,0,-1));
+		return 0.5*(N + 1.0);
 	}
-
-
-	double hit_result = hit_sphere(vec3(0,0,-1), 0.5, r);
-	if (hit_result < 0) {
-		// no hit
-	}
-	else {
-		
-	}
-
+	
 	// dir vector is now between -1 and 1
 	vec3 unit_direction = unit_vector(r.direction());
 	// shift y so that: 0.0 < t < 1.0
-	double t = 0.5*(unit_direction.y() + 1.0);
+	t = 0.5*(unit_direction.y() + 1.0);
 	// (1-t)*white + (t)*blue <-- this is linear blending, or a "lerp"
 	return (1.0-t)*vec3(1.0,1.0,1.0) + t*vec3(0.5,0.7,1.0);
 }
