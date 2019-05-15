@@ -10,7 +10,7 @@
 
 vec3 color(const ray& r, hitable *world) {
 	hit_record rec;
-	if (world->hit(r, 0.0, MAXFLOAT, rec)) {
+	if (world->hit(r, 0.0, std::numeric_limits<double>::max(), rec)) {
 		return 0.5*(rec.normal + 1.0);
 	}
 	vec3 unit_direction = unit_vector(r.direction()); // dir vector is now between -1 and 1
@@ -41,13 +41,13 @@ int main()
 	vec3 vertical(0.0, 2.0, 0.0);
 	vec3 origin(0.0, 0.0, 0.0);
 
-	int num_spheres = 4;
-	hitable *list[num_spheres];
+	const int NUM_SPHERES = 4;
+	hitable *list[NUM_SPHERES];
 	list[0] = new sphere(vec3(0,0,-1), 0.5); // center sphere
 	list[1] = new sphere(vec3(0,-100.5,-1), 100); // large sphere underneath
 	list[2] = new sphere(vec3(0.2,0,-0.6), 0.1); // slightly smaller sphere center right, in front
 	list[3] = new sphere(vec3(0,0,-1), 0.2); // smaller sphere inside center sphere, should be invisible
-	hitable *world = new hitable_list(list, num_spheres);
+	hitable *world = new hitable_list(list, NUM_SPHERES);
 
 	std::cout << "Beginning ray tracing..." << std::endl;
 	for (int j = ny-1; j >=0; j--) {
