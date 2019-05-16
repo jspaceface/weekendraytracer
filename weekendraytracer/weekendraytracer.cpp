@@ -1,12 +1,14 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include "ray.h"
 #include "simplepmm.h"
 #include "hitable_list.h"
 #include "sphere.h"
 #include "float.h"
 #include "constants.h"
+#include "camera.h"
 
 vec3 color(const ray& r, hitable *world) {
 	hit_record rec;
@@ -30,16 +32,12 @@ int main()
 
 	int nx = 200;
 	int ny = 100;
+	int ns = 100;
 
 	// open ppm file
 	std::ofstream fs(filename);
 	if (!fs) { std::cerr << "Cannot open the output file." << std::endl; return 1;}
 	fs << "P3\n" << nx << " " << ny << "\n255\n";
-	
-	vec3 lower_left_corner(-2.0, -1.0, -1.0);
-	vec3 horizontal(4.0, 0.0, 0.0);
-	vec3 vertical(0.0, 2.0, 0.0);
-	vec3 origin(0.0, 0.0, 0.0);
 
 	const int NUM_SPHERES = 4;
 	hitable *list[NUM_SPHERES];
@@ -48,22 +46,31 @@ int main()
 	list[2] = new sphere(vec3(0.2,0,-0.6), 0.1); // slightly smaller sphere center right, in front
 	list[3] = new sphere(vec3(0,0,-1), 0.2); // smaller sphere inside center sphere, should be invisible
 	hitable *world = new hitable_list(list, NUM_SPHERES);
+	camera cam;
+
+	std::random_device rd;  
+	std::mt19937 gen(rd()); 
+	std::uniform_real_distribution<> dis(0.0, 1.0);
 
 	std::cout << "Beginning ray tracing..." << std::endl;
 	for (int j = ny-1; j >=0; j--) {
 		for (int i = 0; i < nx; i++) {
+			vec3 col(0,0,0);
 
-			// u and v go roughly from 0 to 1, representing how far along each axis we are.
-			double u = double(i) / double(nx);
-			double v = double(j) / double(ny);
+			// Do ns samples of pixel (i,j)
+			for (int s = 0; s < ns; s++) {
+				double irand = dis(gen);
+				double jrand = dis(gen);
 
-			//TODO: try this with and without the -origin
-			ray r(origin, lower_left_corner + u*horizontal + v*vertical);
-			// ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
+				// u and v go roughly from 0 to 1, representing how far along each axis we are.
+				double u = double(i + irand) / double(nx);
+				double v = double(j + jrand) / double(ny);
 
-			vec3 col = color(r, world);
+				ray r = cam.get_ray(u, v);
 
-			//todo move this to a .h file
+				col += color(r, world);
+			}
+			col /= double(ns);
 			int ir = int(255.99 * col.r());
 			int ig = int(255.99 * col.g());
 			int ib = int(255.99 * col.b());
