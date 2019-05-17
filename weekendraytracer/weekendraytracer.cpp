@@ -9,6 +9,20 @@
 #include "float.h"
 #include "constants.h"
 #include "camera.h"
+#include "unit_rand.h"
+
+
+vec3 random_in_unit_sphere() {
+	unit_rand ur;
+	vec3 p;
+	do {
+		// generate a vector with: 0 <= x, y, and z < 1.0.
+		p = 2.0*vec3(ur.gen(), ur.gen(), ur.gen()) - vec3(1,1,1);
+
+	// try again if it is outside the unit sphere
+	} while (p.squared_length() >= 1);
+	return p;
+}
 
 vec3 color(const ray& r, hitable *world) {
 	hit_record rec;
@@ -47,11 +61,7 @@ int main()
 	list[3] = new sphere(vec3(0,0,-1), 0.2); // smaller sphere inside center sphere, should be invisible
 	hitable *world = new hitable_list(list, NUM_SPHERES);
 	camera cam;
-
-	std::random_device rd;  
-	std::mt19937 gen(rd()); 
-	std::uniform_real_distribution<> dis(0.0, 1.0);
-
+	unit_rand ur;
 	std::cout << "Beginning ray tracing..." << std::endl;
 	for (int j = ny-1; j >=0; j--) {
 		for (int i = 0; i < nx; i++) {
@@ -59,8 +69,8 @@ int main()
 
 			// Do ns samples of pixel (i,j)
 			for (int s = 0; s < ns; s++) {
-				double irand = dis(gen);
-				double jrand = dis(gen);
+				double irand = ur.gen();
+				double jrand = ur.gen();
 
 				// u and v go roughly from 0 to 1, representing how far along each axis we are.
 				double u = double(i + irand) / double(nx);
