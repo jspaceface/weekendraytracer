@@ -18,16 +18,22 @@ vec3 random_in_unit_sphere() {
 	do {
 		// generate a vector with: 0 <= x, y, and z < 1.0.
 		p = 2.0*vec3(ur.gen(), ur.gen(), ur.gen()) - vec3(1,1,1);
-
-	// try again if it is outside the unit sphere
+	// try again if it is outside the unit sphere (check whether x^2 + y^2 + z^2 >= 1^2 = 1)
 	} while (p.squared_length() >= 1);
 	return p;
 }
 
 vec3 color(const ray& r, hitable *world) {
 	hit_record rec;
-	if (world->hit(r, 0.0, std::numeric_limits<double>::max(), rec)) {
-		return 0.5*(rec.normal + 1.0);
+	// check for hits (0.00001 as t_min to avoid shadow acne, which is when the hit
+	// is at t=0 and interceptor math gives small values just left or right of 0)
+	if (world->hit(r, 0.00001, std::numeric_limits<double>::max(), rec)) {
+		// generate a reflected ray and follow it
+		vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+		return 0.5*color(ray(rec.p, target-rec.p), world);
+
+		// map the normal vector to a color, and return that.
+		// return 0.5*(rec.normal + 1.0);
 	}
 	vec3 unit_direction = unit_vector(r.direction()); // dir vector is now between -1 and 1
 	double t = 0.5*(unit_direction.y() + 1.0); // shift y so that: 0.0 < t < 1.0
@@ -53,12 +59,12 @@ int main()
 	if (!fs) { std::cerr << "Cannot open the output file." << std::endl; return 1;}
 	fs << "P3\n" << nx << " " << ny << "\n255\n";
 
-	const int NUM_SPHERES = 4;
+	const int NUM_SPHERES = 2;
 	hitable *list[NUM_SPHERES];
 	list[0] = new sphere(vec3(0,0,-1), 0.5); // center sphere
 	list[1] = new sphere(vec3(0,-100.5,-1), 100); // large sphere underneath
-	list[2] = new sphere(vec3(0.2,0,-0.6), 0.1); // slightly smaller sphere center right, in front
-	list[3] = new sphere(vec3(0,0,-1), 0.2); // smaller sphere inside center sphere, should be invisible
+	// list[2] = new sphere(vec3(0.2,0,-0.6), 0.1); // slightly smaller sphere center right, in front
+	// list[3] = new sphere(vec3(0,0,-1), 0.2); // smaller sphere inside center sphere, should be invisible
 	hitable *world = new hitable_list(list, NUM_SPHERES);
 	camera cam;
 	unit_rand ur;
@@ -81,6 +87,8 @@ int main()
 				col += color(r, world);
 			}
 			col /= double(ns);
+			// fix gamma correction in image viewers
+			col = vec3(sqrt(col.r()), sqrt(col.g()), sqrt(col.b()));
 			int ir = int(255.99 * col.r());
 			int ig = int(255.99 * col.g());
 			int ib = int(255.99 * col.b());
