@@ -12,18 +12,11 @@
 #include "unit_rand.h"
 
 
-vec3 random_in_unit_sphere() {
-	unit_rand ur;
-	vec3 p;
-	do {
-		// generate a vector with: 0 <= x, y, and z < 1.0.
-		p = 2.0*vec3(ur.gen(), ur.gen(), ur.gen()) - vec3(1,1,1);
-	// try again if it is outside the unit sphere (check whether x^2 + y^2 + z^2 >= 1^2 = 1)
-	} while (p.squared_length() >= 1);
-	return p;
-}
-
 vec3 color(const ray& r, hitable *world) {
+
+	//todo resume page 27
+
+
 	hit_record rec;
 	// check for hits (0.00001 as t_min to avoid shadow acne, which is when the hit
 	// is at t=0 and interceptor math gives small values just left or right of 0)
