@@ -2,6 +2,7 @@
 #define HITABLEH
 
 #include "ray.h"
+#include "unit_rand.h"
 
 class material;
 
