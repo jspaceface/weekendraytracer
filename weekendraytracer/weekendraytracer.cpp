@@ -12,6 +12,7 @@
 #include "unit_rand.h"
 #include "material.h"
 #include "lambertian.h"
+#include "metal.h"
 
 
 vec3 color(const ray& r, hitable *world, int depth) {
@@ -49,12 +50,12 @@ int main()
 	if (!fs) { std::cerr << "Cannot open the output file." << std::endl; return 1;}
 	fs << "P3\n" << nx << " " << ny << "\n255\n";
 
-	const int NUM_SPHERES = 2;
+	const int NUM_SPHERES = 4;
 	hitable *list[NUM_SPHERES];
 	list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3))); // center sphere
 	list[1] = new sphere(vec3(0,-100.5,-1), 100, new lambertian(vec3(0.8, 0.8, 0.0))); // large sphere underneath
-	list[2] = new sphere(vec3(1,0,-1), 0.1); // slightly smaller sphere center right, in front
-	list[3] = new sphere(vec3(-1,0,-1), 0.2); // smaller sphere inside center sphere, should be invisible
+	list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
+	list[3] = new sphere(vec3(-1,0,-1), 0.5, new metal(vec3(0.8, 0.8, 0.8), 1.0));
 	hitable *world = new hitable_list(list, NUM_SPHERES);
 	camera cam;
 	unit_rand ur;
